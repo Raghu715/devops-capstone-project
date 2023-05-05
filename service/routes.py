@@ -57,8 +57,7 @@ def create_accounts():
     account.create()
     message = account.serialize()
     # Uncomment once get_accounts has been implemented
-    # location_url = url_for("get_accounts", account_id=account.id, _external=True)
-    location_url = "/"  # Remove once get_accounts has been implemented
+    location_url = url_for("get_accounts", account_id=account.id, _external=True)
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
@@ -82,11 +81,11 @@ def list_accounts():
 
 def test_get_account_list(self):
     """It should Get a list of Accounts"""
-        self._create_accounts(5)
-         resp = self.client.get(BASE_URL)
-         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-         data = resp.get_json()
-         self.assertEqual(len(data), 5)    
+    self._create_accounts(5)
+    resp = self.client.get(BASE_URL)
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    data = resp.get_json()
+    self.assertEqual(len(data), 5)    
 ######################################################################
 # READ AN ACCOUNT
 ######################################################################
@@ -99,7 +98,6 @@ def get_accounts(account_id):
         This endpoint will read an Account based the account_id that is requested
         """
         app.logger.info("Request to read an Account with id: %s", account_id)
-
         account = Account.find(account_id)
         if not account:
             abort(status.HTTP_404_NOT_FOUND, f"Account with id [{account_id}] could not be found.")
@@ -108,20 +106,22 @@ def get_accounts(account_id):
 
 
 def test_get_account(self):
-        """It should Read a single Account"""
-        account = self._create_accounts(1)[0]
+
+    """It should Read a single Account"""
+    account = self._create_accounts(1)[0]
     resp = self.client.get(
             f"{BASE_URL}/{account.id}", content_type="application/json"
         )
-        self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        data = resp.get_json()
-        self.assertEqual(data["name"], account.name)
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    data = resp.get_json()
+    self.assertEqual(data["name"], account.name)
 
 
 def test_get_account_not_found(self):
-        """It should not Read an Account that is not found"""
+
+    """It should not Read an Account that is not found"""
     resp = self.client.get(f"{BASE_URL}/0")
-        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)        
+    self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)        
 ######################################################################
 # UPDATE AN EXISTING ACCOUNT
 ######################################################################
@@ -143,18 +143,19 @@ def update_accounts(account_id):
 
 
 def test_update_account(self):
-        """It should Update an existing Account"""
+
+    """It should Update an existing Account"""
         # create an Account to update
-        test_account = Account.factories()
-          resp = self.client.post(BASE_URL, json=test_account.serialize())
-          self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+    test_account = AccountFactory()
+    resp = self.client.post(BASE_URL, json=test_account.serialize())
+    self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
         # update the account
-            new_account = resp.get_json()
-            new_account["name"] = "Something Known"
-         resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
-         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-         updated_account = resp.get_json()
-         self.assertEqual(updated_account["name"], "Something Known")   
+    new_account = resp.get_json()
+    new_account["name"] = "Something Known"
+    resp = self.client.put(f"{BASE_URL}/{new_account['id']}", json=new_account)
+    self.assertEqual(resp.status_code, status.HTTP_200_OK)
+    updated_account = resp.get_json()
+    self.assertEqual(updated_account["name"], "Something Known")   
 ######################################################################
 # DELETE AN ACCOUNT
 ######################################################################
@@ -174,10 +175,11 @@ def delete_accounts(account_id):
 
 
 def test_delete_account(self):
-        """It should Delete an Account"""
-         account = self._create_accounts(1)[0]
-         resp = self.client.delete(f"{BASE_URL}/{account.id}")
-         self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+
+    """It should Delete an Account"""
+    account = self._create_accounts(1)[0]
+    resp = self.client.delete(f"{BASE_URL}/{account.id}")
+    self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
@@ -196,6 +198,7 @@ def check_content_type(media_type):
 
 
 def test_method_not_allowed(self):
-     """It should not allow an illegal method call"""
+
+    """It should not allow an illegal method call"""
     resp = self.client.delete(BASE_URL)
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+    self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
